@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Hollywood Then & Now – Interactive Workbook</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Nunito', 'Comic Sans MS', 'Segoe UI', sans-serif;
+            background: url('hollywood_bg.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            font-weight: 400;
+        }
+        em, i {
+            font-style: normal;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 251, 245, 0.92);
+            border-radius: 35px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25), 0 0 0 6px #ffb085;
+            padding: 20px 15px 90px;
+            position: relative;
+            backdrop-filter: blur(5px);
+            overflow: hidden;
+        }
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 140px;
+            height: 140px;
+            background: #ffd166;
+            border-radius: 50%;
+            opacity: 0.3;
+            z-index: 0;
+        }
+        h1 {
+            text-align: center;
+            font-size: clamp(26px, 5vw, 38px);
+            color: #c44536;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 0 #ffe5d9;
+            position: relative;
+            z-index: 1;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 18px;
+            color: #e76f51;
+            font-weight: bold;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+        }
+        .tablink {
+            background: rgba(254, 227, 208, 0.85);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #6b4e3d;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            white-space: nowrap;
+            backdrop-filter: blur(3px);
+        }
+        .tablink:hover { background: #ffcfa3; }
+        .tablink.active {
+            background: #ff8c61;
+            color: white;
+            box-shadow: 0 5px 12px rgba(255,108,68,0.4);
+            transform: translateY(-2px);
+        }
+        .tab-content {
+            display: none;
+            animation: fade 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+        .tab-content.active { display: block; }
+        @keyframes fade { from { opacity: 0.3; } to { opacity: 1; } }
+
+        .section {
+            margin: 20px 0;
+            padding: 20px 18px;
+            border-radius: 28px;
+            border: 2px solid;
+            background: rgba(255,255,248,0.8);
+            backdrop-filter: blur(3px);
+            position: relative;
+        }
+        .warmup-section { background: rgba(224, 247, 250, 0.85); border-color: #80deea; }
+        .reading-section { background: rgba(255, 248, 225, 0.85); border-color: #ffcc80; }
+        .tf-section { background: rgba(253, 226, 228, 0.85); border-color: #f4acb7; }
+        .choose-section { background: rgba(232, 245, 233, 0.85); border-color: #a5d6a7; }
+        .drag-section { background: rgba(243, 229, 245, 0.85); border-color: #ce93d8; }
+        .questions-section { background: rgba(255, 243, 205, 0.85); border-color: #ffb703; }
+        .about-section { background: rgba(255, 240, 224, 0.85); border-color: #ffab91; }
+        .bonus-section { background: rgba(255, 237, 204, 0.85); border-color: #ffb74d; }
+
+        .question { margin: 15px 0; font-size: 17px; line-height: 1.5; }
+
+        .tf-question {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 12px; border-radius: 16px; margin: 10px 0; font-weight: bold;
+        }
+        .tf-question:nth-child(odd) { background: #ffb3ba; }
+        .tf-question:nth-child(even) { background: #bae1ff; }
+
+        .choose-question {
+            padding: 12px 15px; border-radius: 16px; margin: 10px 0; font-weight: bold;
+        }
+        .choose-question:nth-child(1) { background: #ffd6a5; }
+        .choose-question:nth-child(2) { background: #b5e48c; }
+        .choose-question:nth-child(3) { background: #a0c4ff; }
+        .choose-question:nth-child(4) { background: #ffafcc; }
+
+        select {
+            padding: 6px 10px; border-radius: 14px; border: 2px solid #ccc;
+            font-size: 16px; background: white; font-family: inherit; margin-left: 8px;
+        }
+        .text-input, textarea {
+            border: 2px dashed #fb8500; border-radius: 14px; padding: 8px 12px;
+            font-size: 16px; width: 100%; background: #fffaf3; font-family: inherit; margin-top: 5px;
+        }
+        textarea { resize: vertical; }
+        .map-compare { text-align: center; margin: 15px 0; }
+        .map-compare img { max-width: 100%; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+
+        /* Word Bank */
+        .word-bank, .word-pool {
+            display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 18px 0;
+        }
+        .draggable, .tl-draggable {
+            background: #ffb703; border: 2px solid #fb8500; color: #023047;
+            padding: 10px 20px; border-radius: 30px; font-weight: bold; font-size: 18px;
+            cursor: grab; user-select: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: 0.2s; touch-action: none;
+        }
+        .draggable:active, .tl-draggable:active { cursor: grabbing; }
+        .draggable.dragging, .tl-draggable.dragging { opacity: 0.4; transform: scale(0.95); }
+
+        .drop-zone {
+            display: inline-block; min-width: 110px; min-height: 38px;
+            border: 3px dashed #e76f51; border-radius: 12px;
+            background: #fff5e0; margin: 0 5px; padding: 5px 10px;
+            font-weight: bold; color: #bc6c25; text-align: center;
+            vertical-align: middle; transition: 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .drop-zone.filled { background: #f4a261; color: white; border: 3px solid #9c6644; }
+        .drop-zone.hover { background: #ffddd2; border-color: #d62828; transform: scale(1.03); }
+
+        /* Кнопка Listen */
+        .listen-btn {
+            display: inline-block;
+            margin: 15px 5px 5px;
+            background: #ff006e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #c1124a;
+            transition: 0.1s;
+            user-select: none;
+        }
+        .listen-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #c1124a; }
+        .listen-btn.paused {
+            background: #6c757d;
+            box-shadow: 0 6px 0 #495057;
+        }
+
+        /* Подсветка предложения */
+        .sentence {
+            transition: background 0.2s;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .sentence.highlight {
+            background: #ffe066;
+            font-weight: bold;
+        }
+
+        /* Фото-карточки – увеличены в 2 раза */
+        .photo-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        .photo-gallery img {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 3px solid white;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .photo-gallery img:hover { transform: scale(1.08); }
+
+        .read-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .read-text {
+            flex: 1 1 60%;
+            min-width: 250px;
+        }
+        .read-photos {
+            flex: 1 1 30%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+        .read-photos img {
+            width: 240px;
+            height: 240px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 3px solid white;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+        }
+        @media (max-width: 600px) {
+            .read-layout { flex-direction: column; }
+            .read-photos { flex-direction: row; justify-content: center; }
+            .read-photos img { width: 160px; height: 160px; }
+            .photo-gallery img { width: 140px; height: 140px; }
+        }
+
+        /* Timeline */
+        .timeline-container { margin-top: 30px; text-align: center; }
+        .timeline-title { font-size: 22px; font-weight: bold; color: #b83b5e; margin-bottom: 15px; }
+        .timeline {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            position: relative; margin: 20px 0 10px;
+        }
+        .timeline::before {
+            content: ""; position: absolute; top: 30px; left: 5%; right: 5%; height: 6px;
+            background: linear-gradient(to right, #ffb703, #fb8500, #e63946, #8338ec);
+            border-radius: 3px; z-index: 0;
+        }
+        .tl-node { flex: 1; text-align: center; position: relative; z-index: 1; }
+        .tl-year {
+            background: white; border-radius: 50%; width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 10px; font-weight: bold; font-size: 18px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .tl-node:nth-child(1) .tl-year { background: #ffb703; color: #2d3142; }
+        .tl-node:nth-child(2) .tl-year { background: #fb8500; color: white; }
+        .tl-node:nth-child(3) .tl-year { background: #e63946; color: white; }
+        .tl-node:nth-child(4) .tl-year { background: #8338ec; color: white; }
+        .tl-dropzone {
+            min-height: 100px; border: 3px dashed #ccc; border-radius: 20px;
+            background: rgba(255,255,255,0.7); padding: 10px; margin: 0 5px;
+            transition: 0.2s; display: flex; flex-wrap: wrap; gap: 6px;
+            justify-content: center; align-items: center; flex-direction: column;
+        }
+        .tl-dropzone.hover { border-color: #d62828; background: #ffddd2; }
+        .tl-dropzone .tl-draggable {
+            cursor: pointer; background: #8ac926; border-color: #38b000;
+            color: white; animation: popIn 0.2s;
+        }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .check-btn {
+            display: block; margin: 20px auto 0; background: #2a9d8f; color: white;
+            border: none; padding: 14px 32px; font-size: 20px; border-radius: 50px;
+            font-weight: bold; cursor: pointer; box-shadow: 0 8px 0 #1e6b5e;
+            transition: 0.1s; letter-spacing: 1px;
+        }
+        .check-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #1e6b5e; }
+        .result-message {
+            text-align: center; font-size: 18px; margin-top: 15px;
+            font-weight: bold; color: #264653; min-height: 30px;
+        }
+        .bottom-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(255, 251, 245, 0.95); backdrop-filter: blur(10px);
+            padding: 10px; border-top: 3px solid #ffb085;
+            display: flex; justify-content: center; z-index: 100;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🎬 Hollywood Then & Now 🎬</h1>
+    <div class="subtitle">🌟 Interactive Workbook 🌟</div>
+
+    <div class="tabs">
+        <button class="tablink active" data-tab="warmup">1. Warm-Up</button>
+        <button class="tablink" data-tab="reading">2. Read</button>
+        <button class="tablink" data-tab="truefalse">3. True/False</button>
+        <button class="tablink" data-tab="choose">4. Choose</button>
+        <button class="tablink" data-tab="drag">5. Word Puzzle</button>
+        <button class="tablink" data-tab="questions">6. Questions</button>
+        <button class="tablink" data-tab="about">7. About You</button>
+        <button class="tablink" data-tab="bonus">8. Bonus</button>
+    </div>
+
+    <!-- Tab 1: Warm-Up -->
+    <div class="tab-content active" id="warmup">
+        <div class="section warmup-section">
+            <h2>🗣️ Warm-Up: Compare & Speak!</h2>
+            <p>Look at the picture of <strong>Hollywood Then and Now</strong>. Talk about the differences.</p>
+            <div class="map-compare">
+                <img src="hollywood_then_now.png" alt="Hollywood Then and Now comparison">
+            </div>
+            <p><strong>Use these constructions:</strong></p>
+            <ul style="margin:10px 0 15px 25px;">
+                <li>There was / There were…</li>
+                <li>There is / There are…</li>
+                <li>In the past there weren't any cars, but now there are a lot of cars.</li>
+                <li>Then Hollywood was a quiet village, now it is a busy part of Los Angeles.</li>
+            </ul>
+            <p>Say at least 3 sentences to your partner or teacher!</p>
+        </div>
+    </div>
+
+    <!-- Tab 2: Reading + Listen + Timeline -->
+    <div class="tab-content" id="reading">
+        <div class="section reading-section">
+            <h2>📖 Read the text</h2>
+            <div class="read-layout">
+                <div class="read-text" id="textContainer"></div>
+                <div class="read-photos">
+                    <img src="photo1.jpg" onerror="this.src='photo1.png'" alt="Old Hollywood">
+                    <img src="photo4.jpg" onerror="this.src='photo4.png'" alt="Universal Studios">
+                </div>
+            </div>
+            <button class="listen-btn" id="listenBtn">🔊 Listen to the text</button>
+            <div class="timeline-container">
+                <div class="timeline-title">🕰️ Timeline: Drag the words to the correct year</div>
+                <div class="word-pool" id="timelineWordPool"></div>
+                <div class="timeline">
+                    <div class="tl-node"><div class="tl-year">1900</div><div class="tl-dropzone" data-year="1900"></div></div>
+                    <div class="tl-node"><div class="tl-year">1911</div><div class="tl-dropzone" data-year="1911"></div></div>
+                    <div class="tl-node"><div class="tl-year">1912</div><div class="tl-dropzone" data-year="1912"></div></div>
+                    <div class="tl-node"><div class="tl-year">Now</div><div class="tl-dropzone" data-year="now"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 3: True/False -->
+    <div class="tab-content" id="truefalse">
+        <div class="section tf-section">
+            <h2>✅ True or False? ❌</h2>
+            <div class="tf-question">1. In 1900, Hollywood was a big city. <select class="tf-select" data-answer="false"><option value="">--</option><option value="false">False</option><option value="true">True</option></select></div>
+            <div class="tf-question">2. There was a post office in the village. <select class="tf-select" data-answer="true"><option value="">--</option><option value="true">True</option><option value="false">False</option></select></div>
+            <div class="tf-question">3. There were ten shops in old Hollywood. <select class="tf-select" data-answer="false"><option value="">--</option><option value="false">False</option><option value="true">True</option></select></div>
+            <div class="tf-question">4. There was a little film studio. <select class="tf-select" data-answer="true"><option value="">--</option><option value="true">True</option><option value="false">False</option></select></div>
+            <div class="tf-question">5. There was a police station in 1911. <select class="tf-select" data-answer="true"><option value="">--</option><option value="true">True</option><option value="false">False</option></select></div>
+            <div class="tf-question">6. There were millions of tourists in 1911. <select class="tf-select" data-answer="false"><option value="">--</option><option value="false">False</option><option value="true">True</option></select></div>
+            <div class="photo-gallery">
+                <img src="photo2.jpg" onerror="this.src='photo2.png'" alt="Old film studio">
+                <img src="photo3.jpg" onerror="this.src='photo3.png'" alt="Hollywood sign">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 4: Choose (исправлен вопрос 4) -->
+    <div class="tab-content" id="choose">
+        <div class="section choose-section">
+            <h2>🔘 Choose the correct answer</h2>
+            <div class="choose-question">1. Today, Hollywood is part of:
+                <select class="choose-select" data-answer="b"><option value="">--</option><option value="b">Los Angeles</option><option value="a">New York</option></select></div>
+            <div class="choose-question">2. The big theme park and real film studio is:
+                <select class="choose-select" data-answer="b"><option value="">--</option><option value="b">Universal Studios</option><option value="a">Disneyland</option></select></div>
+            <div class="choose-question">3. The hotels in modern Hollywood are:
+                <select class="choose-select" data-answer="b"><option value="">--</option><option value="b">tall and modern</option><option value="a">small and old</option></select></div>
+            <div class="choose-question">4. There 
+                <select class="choose-select" data-answer="are" style="margin:0 5px;">
+                    <option value="">--</option><option value="are">are</option><option value="were">were</option><option value="is">is</option>
+                </select> millions of tourists in Hollywood today.</div>
+            <div class="photo-gallery">
+                <img src="photo5.jpg" onerror="this.src='photo5.png'" alt="Walk of Fame">
+                <img src="photo4.jpg" onerror="this.src='photo4.png'" alt="Universal">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 5: Word Puzzle -->
+    <div class="tab-content" id="drag">
+        <div class="section drag-section">
+            <h2>🧩 Word Puzzle: Drag & Drop</h2>
+            <p>Drag the words into the correct spaces.</p>
+            <div class="word-bank" id="wordBank">
+                <span class="draggable" data-word="village">🏘️ village</span>
+                <span class="draggable" data-word="tourists">📸 tourists</span>
+                <span class="draggable" data-word="cars">🚗 cars</span>
+                <span class="draggable" data-word="horses">🐴 horses</span>
+                <span class="draggable" data-word="studios">🎥 studios</span>
+            </div>
+            <div class="question">1. In the past, there were no <span class="drop-zone" data-accept="cars"></span>. People used <span class="drop-zone" data-accept="horses"></span>.</div>
+            <div class="question">2. Today, there are many <span class="drop-zone" data-accept="tourists"></span> with cameras.</div>
+            <div class="question">3. In 1900, Hollywood was a small <span class="drop-zone" data-accept="village"></span>.</div>
+            <div class="question">4. In 1912 there were fifteen <span class="drop-zone" data-accept="studios"></span> in the town!</div>
+            <div class="photo-gallery">
+                <img src="photo1.jpg" onerror="this.src='photo1.png'" alt="Old street">
+                <img src="photo2.jpg" onerror="this.src='photo2.png'" alt="Studio">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 6: Questions (без подсказок) -->
+    <div class="tab-content" id="questions">
+        <div class="section questions-section">
+            <h2>❓ Questions</h2>
+            <p>Answer the questions in full sentences.</p>
+            <div class="question">1. Was there a post office in 1900?<br><input type="text" class="text-input" placeholder="Write your answer"></div>
+            <div class="question">2. Were films popular in 1911?<br><input type="text" class="text-input" placeholder="Write your answer"></div>
+            <div class="question">3. How many film studios were there in 1912?<br><input type="text" class="text-input" placeholder="Write your answer"></div>
+            <div class="question">4. What is Universal Studios?<br><input type="text" class="text-input" placeholder="Write your answer"></div>
+            <div class="photo-gallery">
+                <img src="photo2.jpg" onerror="this.src='photo2.png'" alt="Film studio">
+                <img src="photo3.jpg" onerror="this.src='photo3.png'" alt="Hollywood sign">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 7: About You -->
+    <div class="tab-content" id="about">
+        <div class="section about-section">
+            <h2>😊 About you</h2>
+            <div class="question">1. Would you like to visit Hollywood now? Why?<br><input type="text" class="text-input" placeholder="Write your answer"></div>
+            <div class="question">2. What film from Hollywood do you like?<br><input type="text" class="text-input" placeholder="Write your answer"></div>
+            <div class="photo-gallery">
+                <img src="photo1.jpg" onerror="this.src='photo1.png'" alt="Old Hollywood">
+                <img src="photo5.jpg" onerror="this.src='photo5.png'" alt="Walk of Fame">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 8: Bonus -->
+    <div class="tab-content" id="bonus">
+        <div class="section bonus-section">
+            <h2>⭐ BONUS: Spot the difference!</h2>
+            <div class="question">1. Write ONE big difference between Hollywood THEN and NOW.<br><textarea rows="3" placeholder="Then there was... Now there is..."></textarea></div>
+            <div class="photo-gallery">
+                <img src="photo3.jpg" onerror="this.src='photo3.png'" alt="Sign">
+                <img src="photo5.jpg" onerror="this.src='photo5.png'" alt="Stars">
+            </div>
+        </div>
+    </div>
+
+    <div class="result-message" id="resultMessage"></div>
+</div>
+
+<div class="bottom-bar">
+    <button class="check-btn" id="checkAllBtn">✅ Check all answers</button>
+</div>
+
+<script>
+    (function() {
+        // Разбивка текста на предложения
+        const fullText = `HOLLYWOOD THEN AND NOW
+Hollywood is famous for its film studios and for big, exciting films such as Star Wars, Titanic and The Avengers. A lot of people live there too. But it was very different in the past.
+In 1900, Hollywood was a small village near Los Angeles. There was a post office, a hotel, two shops — and 500 people. In 1911 there was also a police station and a little film studio. The film industry was new, and films were very popular. A year later, in 1912, there were fifteen studios in the town! Hollywood wasn’t a quiet little town any more. It was full of actors, and there were restaurants and cinemas.
+Today, Hollywood is part of Los Angeles. There are busy shopping centres, modern hotels and theatres. Millions of tourists visit Hollywood every year, and many go to Universal Studios. It’s a large theme park and a real film studio. Hollywood is very different from the small village of the past!`;
+
+        const sentences = fullText.match(/[^.!?\n]+[.!?]*/g) || [fullText];
+        const textContainer = document.getElementById('textContainer');
+        textContainer.innerHTML = '';
+        sentences.forEach((sentence, index) => {
+            const span = document.createElement('span');
+            span.className = 'sentence';
+            span.textContent = sentence.trim() + (sentence.trim().length ? ' ' : '');
+            span.dataset.index = index;
+            textContainer.appendChild(span);
+        });
+
+        // Озвучка с паузой и подсветкой
+        let currentIndex = 0;
+        let isSpeaking = false;
+        let utterance = null;
+        const listenBtn = document.getElementById('listenBtn');
+        const sentenceSpans = document.querySelectorAll('.sentence');
+
+        function highlightSentence(index) {
+            sentenceSpans.forEach(s => s.classList.remove('highlight'));
+            if (index >= 0 && index < sentenceSpans.length) {
+                sentenceSpans[index].classList.add('highlight');
+            }
+        }
+
+        function speakSentence(index) {
+            if (!window.speechSynthesis) {
+                alert('Sorry, your browser does not support speech synthesis.');
+                return;
+            }
+            if (index >= sentences.length) {
+                stopSpeaking();
+                return;
+            }
+            highlightSentence(index);
+            const sentenceText = sentences[index].trim();
+            if (!sentenceText) {
+                currentIndex++;
+                speakSentence(currentIndex);
+                return;
+            }
+            utterance = new SpeechSynthesisUtterance(sentenceText);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            utterance.onend = function() {
+                currentIndex++;
+                if (isSpeaking) speakSentence(currentIndex);
+            };
+            utterance.onerror = function() {
+                currentIndex++;
+                if (isSpeaking) speakSentence(currentIndex);
+            };
+            speechSynthesis.cancel();
+            speechSynthesis.speak(utterance);
+        }
+
+        function startSpeaking() {
+            if (isSpeaking) return;
+            isSpeaking = true;
+            listenBtn.textContent = '⏸️ Pause';
+            listenBtn.classList.remove('paused');
+            if (currentIndex >= sentences.length) currentIndex = 0;
+            speakSentence(currentIndex);
+        }
+
+        function pauseSpeaking() {
+            if (!isSpeaking) return;
+            isSpeaking = false;
+            speechSynthesis.cancel();
+            listenBtn.textContent = '▶️ Resume';
+            listenBtn.classList.add('paused');
+        }
+
+        function stopSpeaking() {
+            isSpeaking = false;
+            speechSynthesis.cancel();
+            currentIndex = 0;
+            highlightSentence(-1);
+            listenBtn.textContent = '🔊 Listen to the text';
+            listenBtn.classList.remove('paused');
+        }
+
+        listenBtn.addEventListener('click', function() {
+            if (isSpeaking) pauseSpeaking();
+            else startSpeaking();
+        });
+
+        const tabButtons = document.querySelectorAll('.tablink');
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.dataset.tab !== 'reading' && isSpeaking) stopSpeaking();
+            });
+        });
+
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.dataset.tab;
+                tabButtons.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(target).classList.add('active');
+                document.getElementById('resultMessage').innerHTML = '';
+            });
+        });
+
+        function playPop() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator(); const gain = ctx.createGain();
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.frequency.value = 700; osc.type = 'sine';
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+                osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.1);
+            } catch(e) {}
+        }
+
+        // Timeline words shuffle
+        const timelineWords = [
+            { word: 'Post Office', text: '🏤 Post Office', year: '1900' },
+            { word: 'Hotel', text: '🏨 Hotel', year: '1900' },
+            { word: 'Two Shops', text: '🏪 Two Shops', year: '1900' },
+            { word: '500 people', text: '👥 500 people', year: '1900' },
+            { word: 'Police Station', text: '🚔 Police Station', year: '1911' },
+            { word: 'Little Film Studio', text: '🎥 Little Film Studio', year: '1911' },
+            { word: '15 Studios', text: '🎬 15 Studios', year: '1912' },
+            { word: 'Restaurants', text: '🍽️ Restaurants', year: '1912' },
+            { word: 'Cinemas', text: '🎞️ Cinemas', year: '1912' },
+            { word: 'Busy Shopping Centres', text: '🛍️ Busy Shopping Centres', year: 'now' },
+            { word: 'Modern Hotels', text: '🏢 Modern Hotels', year: 'now' },
+            { word: 'Theatres', text: '🎭 Theatres', year: 'now' },
+            { word: 'Millions of Tourists', text: '📸 Millions of Tourists', year: 'now' },
+            { word: 'Universal Studios', text: '🌍 Universal Studios', year: 'now' }
+        ];
+
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function buildTimelineWords() {
+            const pool = document.getElementById('timelineWordPool');
+            pool.innerHTML = '';
+            const shuffled = shuffleArray([...timelineWords]);
+            shuffled.forEach(item => {
+                const span = document.createElement('span');
+                span.className = 'tl-draggable';
+                span.dataset.word = item.word;
+                span.textContent = item.text;
+                span.addEventListener('pointerdown', tlDragStart);
+                span.addEventListener('dragstart', e => e.preventDefault());
+                pool.appendChild(span);
+            });
+        }
+        buildTimelineWords();
+
+        const tlDropZones = document.querySelectorAll('.tl-dropzone');
+        let tlDragged = null, tlClone = null, tlOffsetX, tlOffsetY;
+
+        function tlDragStart(e) {
+            if (this.closest('.tl-dropzone')) return;
+            tlDragged = this;
+            this.classList.add('dragging');
+            tlClone = this.cloneNode(true);
+            tlClone.style.position = 'absolute'; tlClone.style.zIndex = '1000';
+            tlClone.style.pointerEvents = 'none'; tlClone.style.opacity = '0.8';
+            document.body.appendChild(tlClone);
+            const rect = this.getBoundingClientRect();
+            tlOffsetX = e.clientX - rect.left;
+            tlOffsetY = e.clientY - rect.top;
+            moveClone(e.clientX, e.clientY);
+            e.preventDefault();
+        }
+        function moveClone(x, y) {
+            if (!tlClone) return;
+            tlClone.style.left = (x - tlOffsetX) + 'px';
+            tlClone.style.top = (y - tlOffsetY) + 'px';
+        }
+        function tlDragMove(e) {
+            if (!tlDragged) return;
+            moveClone(e.clientX, e.clientY);
+            tlDropZones.forEach(z => z.classList.remove('hover'));
+            const target = getTlZone(e.clientX, e.clientY);
+            if (target) target.classList.add('hover');
+            e.preventDefault();
+        }
+        function getTlZone(x, y) {
+            for (let zone of tlDropZones) {
+                const r = zone.getBoundingClientRect();
+                if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return zone;
+            }
+            return null;
+        }
+        function tlDragEnd(e) {
+            if (!tlDragged) return;
+            if (tlClone) { document.body.removeChild(tlClone); tlClone = null; }
+            tlDragged.classList.remove('dragging');
+            tlDropZones.forEach(z => z.classList.remove('hover'));
+            const target = getTlZone(e.clientX, e.clientY);
+            if (target) {
+                document.querySelectorAll('.tl-dropzone .tl-draggable').forEach(el => {
+                    if (el.dataset.word === tlDragged.dataset.word) el.remove();
+                });
+                const newEl = document.createElement('span');
+                newEl.className = 'tl-draggable';
+                newEl.dataset.word = tlDragged.dataset.word;
+                newEl.textContent = tlDragged.textContent;
+                newEl.addEventListener('dblclick', returnToPool);
+                target.appendChild(newEl);
+                tlDragged.remove();
+                playPop();
+            }
+            tlDragged = null;
+            e.preventDefault();
+        }
+        function returnToPool(e) {
+            const word = this.dataset.word;
+            this.remove();
+            if (!document.querySelector(`.tl-draggable[data-word="${word}"]:not(.tl-dropzone .tl-draggable)`)) {
+                const origData = timelineWords.find(w => w.word === word);
+                if (origData) {
+                    const span = document.createElement('span');
+                    span.className = 'tl-draggable';
+                    span.dataset.word = origData.word;
+                    span.textContent = origData.text;
+                    span.addEventListener('pointerdown', tlDragStart);
+                    span.addEventListener('dragstart', e => e.preventDefault());
+                    document.getElementById('timelineWordPool').appendChild(span);
+                }
+            }
+        }
+
+        document.addEventListener('pointermove', tlDragMove);
+        document.addEventListener('pointerup', tlDragEnd);
+        document.addEventListener('pointercancel', tlDragEnd);
+
+        // Word Puzzle Drag & Drop
+        const wDraggables = document.querySelectorAll('.draggable');
+        const wDropZones = document.querySelectorAll('.drop-zone');
+        let wDragged = null, wClone = null, wOffsetX, wOffsetY;
+
+        function wDragStart(e) {
+            wDragged = this; this.classList.add('dragging');
+            wClone = this.cloneNode(true);
+            wClone.style.position = 'absolute'; wClone.style.zIndex = '1000';
+            wClone.style.pointerEvents = 'none'; wClone.style.opacity = '0.8';
+            document.body.appendChild(wClone);
+            const rect = this.getBoundingClientRect();
+            wOffsetX = e.clientX - rect.left; wOffsetY = e.clientY - rect.top;
+            wMoveClone(e.clientX, e.clientY);
+            e.preventDefault();
+        }
+        function wMoveClone(x, y) {
+            if (!wClone) return;
+            wClone.style.left = (x - wOffsetX) + 'px';
+            wClone.style.top = (y - wOffsetY) + 'px';
+        }
+        function wDragMove(e) {
+            if (!wDragged) return;
+            wMoveClone(e.clientX, e.clientY);
+            wDropZones.forEach(z => z.classList.remove('hover'));
+            const target = getWZone(e.clientX, e.clientY);
+            if (target) target.classList.add('hover');
+            e.preventDefault();
+        }
+        function getWZone(x, y) {
+            for (let zone of wDropZones) {
+                const r = zone.getBoundingClientRect();
+                if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return zone;
+            }
+            return null;
+        }
+        function wDragEnd(e) {
+            if (!wDragged) return;
+            if (wClone) { document.body.removeChild(wClone); wClone = null; }
+            wDragged.classList.remove('dragging');
+            wDropZones.forEach(z => z.classList.remove('hover'));
+            const target = getWZone(e.clientX, e.clientY);
+            if (target) {
+                const word = wDragged.dataset.word;
+                if (target.classList.contains('filled')) {
+                    const old = target.dataset.currentWord;
+                    document.querySelectorAll('.draggable').forEach(d => {
+                        if (d.dataset.word === old) d.classList.remove('hidden');
+                    });
+                }
+                target.textContent = word;
+                target.classList.add('filled');
+                target.dataset.currentWord = word;
+                wDragged.classList.add('hidden');
+                playPop();
+            }
+            wDragged = null;
+            e.preventDefault();
+        }
+        wDraggables.forEach(d => {
+            d.addEventListener('pointerdown', wDragStart);
+            d.addEventListener('dragstart', e => e.preventDefault());
+        });
+        document.addEventListener('pointermove', wDragMove);
+        document.addEventListener('pointerup', wDragEnd);
+        document.addEventListener('pointercancel', wDragEnd);
+        wDropZones.forEach(zone => {
+            zone.addEventListener('dblclick', function() {
+                if (this.classList.contains('filled')) {
+                    const word = this.dataset.currentWord;
+                    this.textContent = '';
+                    this.classList.remove('filled');
+                    delete this.dataset.currentWord;
+                    document.querySelectorAll('.draggable').forEach(d => {
+                        if (d.dataset.word === word) d.classList.remove('hidden');
+                    });
+                }
+            });
+        });
+
+        // Проверка
+        document.getElementById('checkAllBtn').addEventListener('click', () => {
+            let totalScore = 0, maxScore = 0, messages = [];
+
+            const tfSelects = document.querySelectorAll('.tf-select');
+            let tfScore = 0;
+            tfSelects.forEach(sel => { if (sel.value === sel.dataset.answer) tfScore++; });
+            totalScore += tfScore; maxScore += 6;
+            messages.push(`✅ True/False: ${tfScore}/6`);
+
+            const chooseSelects = document.querySelectorAll('.choose-select');
+            let chooseScore = 0;
+            chooseSelects.forEach(sel => { if (sel.value === sel.dataset.answer) chooseScore++; });
+            totalScore += chooseScore; maxScore += 4;
+            messages.push(`🔘 Choose: ${chooseScore}/4`);
+
+            const dropZonesAll = document.querySelectorAll('.drop-zone');
+            let dragScore = 0;
+            dropZonesAll.forEach(zone => {
+                if (zone.classList.contains('filled') && zone.dataset.currentWord === zone.dataset.accept) dragScore++;
+            });
+            totalScore += dragScore; maxScore += 4;
+            messages.push(`🧩 Word Puzzle: ${dragScore}/4`);
+
+            const correctTimeline = {
+                '1900': ['Post Office','Hotel','Two Shops','500 people'],
+                '1911': ['Police Station','Little Film Studio'],
+                '1912': ['15 Studios','Restaurants','Cinemas'],
+                'now': ['Busy Shopping Centres','Modern Hotels','Theatres','Millions of Tourists','Universal Studios']
+            };
+            let tlScore = 0;
+            tlDropZones.forEach(zone => {
+                const year = zone.dataset.year;
+                const wordsInZone = Array.from(zone.querySelectorAll('.tl-draggable')).map(el => el.dataset.word);
+                const correct = correctTimeline[year] || [];
+                if (wordsInZone.length === correct.length && correct.every(w => wordsInZone.includes(w))) tlScore++;
+            });
+            totalScore += tlScore; maxScore += 4;
+            messages.push(`🕰️ Timeline: ${tlScore}/4`);
+            messages.push(`📝 Questions, About You, and Bonus are checked by teacher.`);
+
+            document.getElementById('resultMessage').innerHTML = `<strong>Total: ${totalScore} / ${maxScore}</strong><br>` + messages.join('<br>');
+            playPop();
+        });
+
+        document.querySelectorAll('select, input, textarea').forEach(el => {
+            el.addEventListener('change', () => document.getElementById('resultMessage').innerHTML = '');
+        });
+    })();
+</script>
+</body>
+</html>
